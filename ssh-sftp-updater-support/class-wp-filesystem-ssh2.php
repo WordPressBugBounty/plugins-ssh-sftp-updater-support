@@ -34,7 +34,7 @@ class WP_Filesystem_SSH2 extends WP_Filesystem_Base {
 		$this->errors = new WP_Error();
 
 		if ( !function_exists('stream_get_contents') ) {
-			$this->errors->add('ssh2_php_requirement', __('We require the PHP5 function <code>stream_get_contents()</code>'));
+			$this->errors->add('ssh2_php_requirement', __('We require the PHP5 function <code>stream_get_contents()</code>', 'ssh-sftp-updater-support'));
 			return false;
 		}
 
@@ -45,7 +45,7 @@ class WP_Filesystem_SSH2 extends WP_Filesystem_Base {
 			$this->options['port'] = $opt['port'];
 
 		if ( empty($opt['hostname']) )
-			$this->errors->add('empty_hostname', __('SSH2 hostname is required'));
+			$this->errors->add('empty_hostname', __('SSH2 hostname is required')); // phpcs:ignore WordPress.WP.I18n.MissingArgDomain -- String is part of WordPress core
 		else
 			$this->options['hostname'] = $opt['hostname'];
 
@@ -57,7 +57,7 @@ class WP_Filesystem_SSH2 extends WP_Filesystem_Base {
 
 			$this->keys = true;
 		} elseif ( empty ($opt['username']) ) {
-			$this->errors->add('empty_username', __('SSH2 username is required'));
+			$this->errors->add('empty_username', __('SSH2 username is required')); // phpcs:ignore WordPress.WP.I18n.MissingArgDomain -- String is part of WordPress core
 		}
 
 		if ( !empty($opt['username']) )
@@ -65,7 +65,7 @@ class WP_Filesystem_SSH2 extends WP_Filesystem_Base {
 
 		if ( empty ($opt['password']) ) {
 			if ( !$this->keys )	//password can be blank if we are using keys
-				$this->errors->add('empty_password', __('SSH2 password is required'));
+				$this->errors->add('empty_password', __('SSH2 password is required')); // phpcs:ignore WordPress.WP.I18n.MissingArgDomain -- String is part of WordPress core
 		} else {
 			$this->options['password'] = $opt['password'];
 
@@ -76,7 +76,7 @@ class WP_Filesystem_SSH2 extends WP_Filesystem_Base {
 	public function connect() {
 	
 		if (empty($this->options['hostname']) || empty($this->options['username'])) {
-			$this->errors->add('auth', sprintf(__('No connection credentials available'), $this->options));
+			$this->errors->add('auth', sprintf(__('No connection credentials available', 'ssh-sftp-updater-support'), $this->options));
 			return false;
 		}
 	
@@ -86,7 +86,8 @@ class WP_Filesystem_SSH2 extends WP_Filesystem_Base {
 			if ( ! $this->link->login($this->options['username'], $this->options['password']) ) {
 				if ( $this->handle_connect_error() )
 					return false;
-				$this->errors->add('auth', sprintf(__('Username/Password incorrect for %s'), $this->options['username']));
+				// translators: username
+				$this->errors->add('auth', sprintf(__('Username/Password incorrect for %s'), $this->options['username'])); // phpcs:ignore WordPress.WP.I18n.MissingArgDomain -- String is part of WordPress core
 				return false;
 			}
 		} else {
@@ -98,8 +99,9 @@ class WP_Filesystem_SSH2 extends WP_Filesystem_Base {
 			if ( ! $this->link->login($this->options['username'], $rsa ) ) {
 				if ( $this->handle_connect_error() )
 					return false;
-				$this->errors->add('auth', sprintf(__('Private key incorrect for %s'), $this->options['username']));
-				$this->errors->add('auth', __('Make sure that the key you are using is an RSA key and not a DSA key'));
+				// translators: username
+				$this->errors->add('auth', sprintf(__('Private key incorrect for %s', 'ssh-sftp-updater-support'), $this->options['username']));
+				$this->errors->add('auth', __('Make sure that the key you are using is an RSA key and not a DSA key', 'ssh-sftp-updater-support'));
 				return false;
 			}
 		}
@@ -109,8 +111,9 @@ class WP_Filesystem_SSH2 extends WP_Filesystem_Base {
 
 	public function handle_connect_error() {
 		if ( ! $this->link->isConnected() ) {
-			$this->errors->add('connect', sprintf(__('Failed to connect to SSH2 Server %1$s:%2$s'), $this->options['hostname'], $this->options['port']));
-			$this->errors->add('connect2', __('If SELinux is installed check to make sure that <code>httpd_can_network_connect</code> is set to 1'));
+			// translators: hostname, port number
+			$this->errors->add('connect', sprintf(__('Failed to connect to SSH2 Server %1$s:%2$s', 'ssh-sftp-updater-support'), $this->options['hostname'], $this->options['port']));
+			$this->errors->add('connect2', __('If SELinux is installed check to make sure that <code>httpd_can_network_connect</code> is set to 1', 'ssh-sftp-updater-support'));
 			return true;
 		}
 
@@ -274,7 +277,7 @@ class WP_Filesystem_SSH2 extends WP_Filesystem_Base {
 		if (!is_a($this->link, 'Net_SFTP')) return false;
 		return true;
 
-		return is_writable('ssh2.sftp://' . $this->sftp_link . '/' . $file);
+		return is_writable('ssh2.sftp://' . $this->sftp_link . '/' . $file); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_is_writable
 	}
 
 	public function atime($file) {
@@ -358,8 +361,8 @@ class WP_Filesystem_SSH2 extends WP_Filesystem_Base {
 			$struc['group']    	= $this->group($path.'/'.$name, $entry['gid']);
 			$struc['size']    	= $entry['size'];//$this->size($path.'/'.$entry);
 			$struc['lastmodunix']= $entry['mtime'];//$this->mtime($path.'/'.$entry);
-			$struc['lastmod']   = date('M j',$struc['lastmodunix']);
-			$struc['time']    	= date('h:i:s',$struc['lastmodunix']);
+			$struc['lastmod']   = gmdate('M j',$struc['lastmodunix']); 
+			$struc['time']    	= gmdate('h:i:s',$struc['lastmodunix']);
 			$struc['type']		= $entry['type'] == NET_SFTP_TYPE_DIRECTORY ? 'd' : 'f';
 
 			if ( 'd' == $struc['type'] ) {
