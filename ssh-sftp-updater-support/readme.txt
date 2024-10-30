@@ -4,7 +4,8 @@ Donate link: https://sourceforge.net/donate/index.php?group_id=198487
 Tags: ssh, sftp
 Requires at least: 3.1
 Tested up to: 6.7
-Stable tag: 0.8.7
+Stable tag: 0.8.8
+License: MIT
 
 "SSH SFTP Updater Support" is the easiest way to keep your WordPress installation up-to-date with SFTP.
 
@@ -38,6 +39,10 @@ a) `define('FS_METHOD', 'ssh2');`
 b) Others as <a href="https://developer.wordpress.org/apis/wp-config-php/#wordpress-upgrade-constants">detailed in the official WP codex</a> or various other articles (Google for things like WordPress updates via SFTP).
 
 == Changelog ==
+
+= 0.8.8 - 2024/Oct/29 =
+
+* FIX: Remove unwanted tab from the "private key" field, and remove duplicate radio buttons (regression in 0.8.7). You can download the plugin manually from https://downloads.wordpress.org/plugin/ssh-sftp-updater-support.0.8.8.zip and upload it in your WP dashboard in "Plugins -> Add New -> Upload Zip" if you are having trouble updating through the dashboard.
 
 = 0.8.7 - 2024/Oct/28 =
 
@@ -138,4 +143,4 @@ b) Others as <a href="https://developer.wordpress.org/apis/wp-config-php/#wordpr
 * Initial Release
 
 == Upgrade Notice ==
-* 0.8.7: Minor code tidying
+* 0.8.8: Remove unwanted tab from the "private key" field, and remove duplicate radio buttons. You can download the plugin manually from https://downloads.wordpress.org/plugin/ssh-sftp-updater-support.0.8.8.zip and upload it in your WP dashboard in "Plugins -> Add New -> Upload Zip" if you are having trouble updating through the dashboard from 0.8.7.

@@ -2,7 +2,7 @@
 /*
 Plugin Name: SSH SFTP Updater Support
 Description: Update your WordPress blog / plugins via SFTP without libssh2
-Version: 0.8.7
+Version: 0.8.8
 Author: TerraFrost, David Anderson + Team Updraft
 Author URI: https://updraftplus.com/
 License: MIT
@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) die('No direct access allowed');
 
 define('SSH_SFTP_UPDATER_SUPPORT_MAIN_PATH', plugin_dir_path(__FILE__));
 define('SSH_SFTP_UPDATER_SUPPORT_BASENAME', plugin_basename(__FILE__));
-define('SSH_SFTP_UPDATER_SUPPORT_VERSION', '0.8.6');
+define('SSH_SFTP_UPDATER_SUPPORT_VERSION', '0.8.8');
 define('SSH_SFTP_UPDATER_SUPPORT_URL', plugin_dir_url(__FILE__));
 // see http://adambrown.info/p/wp_hooks/hook/<filter name>
 add_filter('filesystem_method', 'phpseclib_filesystem_method', 10, 2); // since 2.6 - WordPress will ignore the ssh option if the php ssh extension is not loaded
@@ -225,8 +225,7 @@ jQuery(function($){
 		</div>
 		</th>
 	<td>
-		<textarea name="private_key" id="private_key" cols="58" rows="10" value="<?php echo esc_attr($private_key) ?>"<?php disabled( defined('FTP_PRIKEY') ); ?>>
-	</textarea>
+		<textarea name="private_key" id="private_key" cols="58" rows="10" <?php disabled( defined('FTP_PRIKEY') ); ?>><?php echo esc_textarea($private_key); ?></textarea>
 	</td>
 </tr>
 <tr class="ssh_keys" valign="top" style="<?php if ( 'ssh' != $connection_type ) echo 'display:none' ?>">
@@ -243,13 +242,7 @@ jQuery(function($){
 <tr valign="top">
 	<th scope="row"><?php esc_html_e('Connection Type'); // phpcs:ignore WordPress.WP.I18n.MissingArgDomain -- String is part of WordPress core ?></th>
 		<td>
-		<fieldset><legend class="screen-reader-text"><span><?php esc_html_e('Connection Type');  // phpcs:ignore WordPress.WP.I18n.MissingArgDomain -- String is part of WordPress core ?></span></legend>
-		<?php
-			$disabled = disabled( (defined('FTP_SSL') && FTP_SSL) || (defined('FTP_SSH') && FTP_SSH), true, false );
-			foreach ( $types as $name => $text ) : ?>
-			<label for="<?php echo esc_attr($name) ?>">
-				<input type="radio" name="connection_type" id="<?php echo esc_attr($name) ?>" value="<?php echo esc_attr($name) ?>" <?php checked($name, $connection_type); echo $disabled; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- HTML attribute ?>><td>
-	<fieldset><legend class="screen-reader-text"><span><?php esc_html_e('Connection Type'); // phpcs:ignore WordPress.WP.I18n.MissingArgDomain -- String is part of WordPress core ?></span></legend>
+		<fieldset><legend class="screen-reader-text"><span><?php esc_html_e('Connection Type'); // phpcs:ignore WordPress.WP.I18n.MissingArgDomain -- String is part of WordPress core ?></span></legend>
 	<?php
 		$disabled = disabled( (defined('FTP_SSL') && FTP_SSL) || (defined('FTP_SSH') && FTP_SSH), true, false );
 		foreach ( $types as $name => $text ) : ?>
@@ -258,10 +251,6 @@ jQuery(function($){
 			<?php echo esc_html($text); ?>
 		</label>
 		<?php endforeach; ?>
-	</fieldset>>
-				<?php echo esc_html($text); ?>
-			</label>
-			<?php endforeach; ?>
 		</fieldset>
 	</td>
 </tr>
