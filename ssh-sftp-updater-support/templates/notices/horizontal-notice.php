@@ -44,7 +44,7 @@
 					} elseif ('wp-optimize' == $button_meta) {
 						$button_text = __('Get WP-Optimize', 'ssh-sftp-updater-support');
 					} 
-					$ssh_sftp_updater_support->ssh_sftp_updater_support_url($button_link, $button_text, null, 'class="updraft_notice_link"');
+					$ssh_sftp_updater_support->ssh_sftp_updater_support_url($button_link, $button_text, null, 'updraft_notice_link');
 					}
 				?>
 			</p>

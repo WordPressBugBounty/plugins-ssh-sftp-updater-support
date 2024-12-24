@@ -2,7 +2,7 @@
 /*
 Plugin Name: SSH SFTP Updater Support
 Description: Update your WordPress blog / plugins via SFTP without libssh2
-Version: 0.9.0
+Version: 1.0.0
 Author: TerraFrost, David Anderson + Team Updraft
 Author URI: https://updraftplus.com
 License: MIT
@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) die('No direct access allowed');
 
 define('SSH_SFTP_UPDATER_SUPPORT_MAIN_PATH', plugin_dir_path(__FILE__));
 define('SSH_SFTP_UPDATER_SUPPORT_BASENAME', plugin_basename(__FILE__));
-define('SSH_SFTP_UPDATER_SUPPORT_VERSION', '0.9.0');
+define('SSH_SFTP_UPDATER_SUPPORT_VERSION', '1.0.0');
 define('SSH_SFTP_UPDATER_SUPPORT_URL', plugin_dir_url(__FILE__));
 // see http://adambrown.info/p/wp_hooks/hook/<filter name>
 add_filter('filesystem_method', 'phpseclib_filesystem_method', 10, 2); // since 2.6 - WordPress will ignore the ssh option if the php ssh extension is not loaded
@@ -46,6 +46,13 @@ function phpseclib_filesystem_method($method, $args) {
 	return (isset($args['connection_type']) && 'ssh' == $args['connection_type']) ? 'ssh2' : $method;
 }
 
+/**
+ * Runs upon the WP filter fs_ftp_connection_types
+ *
+ * @param Array $types
+ *
+ * @return Array
+ */
 function phpseclib_fs_ftp_connection_types($types) {
 	$types['ssh'] = 'SSH2';
 	return $types;
@@ -234,7 +241,7 @@ jQuery(function($){
 			<label for="private_key_file"><?php esc_html_e('Upload Private Key:', 'ssh-sftp-updater-support') ?></label>
 		</div>
 	</th>
-	<td><input name="private_key_file" id="private_key_file" type="file" <?php disabled( defined('FTP_PRIKEY') ); ?>>
+	<td><input name="private_key_file" id="private_key_file" type="file" <?php disabled( defined('FTP_PRIKEY') ); ?>> <?php esc_html_e('(The uploaded private key file will be inserted in the field above)', 'ssh-sftp-updater-support'); ?>
 	</td>
 </tr>
 <?php endif; ?>
@@ -295,6 +302,11 @@ class SSH_SFTP_Updater_Support {
 		add_filter('plugin_row_meta',  array($this, 'plugin_row_meta'), 10, 2);
 	}
 
+	/**
+	 * Returns a singleton instance
+	 *
+	 * @return SSH_SFTP_Updater_Support
+	 */
 	public static function instance() {
 		if (empty(self::$_instance)) {
 			self::$_instance = new self();
@@ -512,12 +524,12 @@ class SSH_SFTP_Updater_Support {
 	 * @param String  $url					  - URL to be check to see if it an updraftplus match.
 	 * @param String  $text					  - Text to be entered within the href a tags.
 	 * @param String  $html					  - Any specific HTML to be added.
-	 * @param String  $class				  - Specify a class for the href (including the attribute label)
+	 * @param String  $classes				  - Space-separated list of classes for the href
 	 * @param Boolean $return_instead_of_echo - if set, then the result will be returned, not echo-ed.
 	 *
 	 * @return String|void
 	 */
-	public function ssh_sftp_updater_support_url($url, $text, $html = '', $class = '', $return_instead_of_echo = false) {
+	public function ssh_sftp_updater_support_url($url, $text, $html = '', $classes = '', $return_instead_of_echo = false) {
 		// Check if the URL is UpdraftPlus.
 		if (false !== strpos($url, '//updraftplus.com')) {
 			// Set URL with Affiliate ID.
@@ -528,12 +540,12 @@ class SSH_SFTP_Updater_Support {
 		}
 		// Return URL - check if there is HTML such as images.
 		if ('' != $html) {
-			$result = '<a '.$class.' href="'.esc_attr($url).'">'.$html.'</a>';
+			$result = '<a '.($class ? 'class="'.esc_attr($classes).'"' : '').' href="'.esc_attr($url).'">'.$html.'</a>';
 		} else {
-			$result = '<a '.$class.' href="'.esc_attr($url).'">'.htmlspecialchars($text).'</a>';
+			$result = '<a '.($class ? 'class="'.esc_attr($classes).'"' : '').' href="'.esc_attr($url).'">'.esc_html($text).'</a>';
 		}
 		if ($return_instead_of_echo) return $result;
-		echo $result; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- already escaped / intended HTML
+		echo wp_kses_post($result);
 	}
 	
 	/**
