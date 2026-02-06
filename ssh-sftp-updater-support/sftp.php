@@ -2,7 +2,7 @@
 /*
 Plugin Name: SSH SFTP Updater Support
 Description: Update your WordPress blog / plugins via SFTP without libssh2
-Version: 1.0.0
+Version: 1.1.1
 Author: TerraFrost, David Anderson + Team Updraft
 Author URI: https://updraftplus.com
 License: MIT
@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) die('No direct access allowed');
 
 define('SSH_SFTP_UPDATER_SUPPORT_MAIN_PATH', plugin_dir_path(__FILE__));
 define('SSH_SFTP_UPDATER_SUPPORT_BASENAME', plugin_basename(__FILE__));
-define('SSH_SFTP_UPDATER_SUPPORT_VERSION', '1.0.0');
+define('SSH_SFTP_UPDATER_SUPPORT_VERSION', '1.1.1');
 define('SSH_SFTP_UPDATER_SUPPORT_URL', plugin_dir_url(__FILE__));
 // see http://adambrown.info/p/wp_hooks/hook/<filter name>
 add_filter('filesystem_method', 'phpseclib_filesystem_method', 10, 2); // since 2.6 - WordPress will ignore the ssh option if the php ssh extension is not loaded
@@ -540,9 +540,9 @@ class SSH_SFTP_Updater_Support {
 		}
 		// Return URL - check if there is HTML such as images.
 		if ('' != $html) {
-			$result = '<a '.($class ? 'class="'.esc_attr($classes).'"' : '').' href="'.esc_attr($url).'">'.$html.'</a>';
+			$result = '<a '.($classes ? 'class="'.esc_attr($classes).'"' : '').' href="'.esc_attr($url).'">'.$html.'</a>';
 		} else {
-			$result = '<a '.($class ? 'class="'.esc_attr($classes).'"' : '').' href="'.esc_attr($url).'">'.esc_html($text).'</a>';
+			$result = '<a '.($classes ? 'class="'.esc_attr($classes).'"' : '').' href="'.esc_attr($url).'">'.esc_html($text).'</a>';
 		}
 		if ($return_instead_of_echo) return $result;
 		echo wp_kses_post($result);
